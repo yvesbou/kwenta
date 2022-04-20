@@ -9,6 +9,7 @@ import TabButton from 'components/Button/TabButton';
 
 import PositionCard from '../PositionCard';
 import Trades from '../Trades';
+import Transfers from '../Transfers';
 
 import ROUTES from 'constants/routes';
 import useGetFuturesPositionForMarket from 'queries/futures/useGetFuturesPositionForMarket';
@@ -18,10 +19,16 @@ import { getExchangeRatesForCurrencies } from 'utils/currencies';
 import { getMarketKey } from 'utils/futures';
 import Connector from 'containers/Connector';
 
+import OrderHistoryIcon from 'assets/svg/futures/icon-order-history.svg';
+import PositionIcon from 'assets/svg/futures/icon-position.svg';
+import TransfersIcon from 'assets/svg/futures/icon-transfers.svg';
+import OpenPositionsIcon from 'assets/svg/futures/icon-open-positions.svg';
+
 enum FuturesTab {
 	POSITION = 'position',
 	ORDERS = 'orders',
 	TRADES = 'trades',
+	TRANSFERS = 'transfers',
 }
 
 const FutureTabs = Object.values(FuturesTab);
@@ -72,9 +79,19 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 		() => [
 			{
 				name: FuturesTab.POSITION,
-				label: 'Open Position',
+				label: 'Position',
 				active: activeTab === FuturesTab.POSITION,
+				icon: PositionIcon,
 				onClick: () => router.push(ROUTES.Markets.Position(marketAsset)),
+			},
+			{
+				name: FuturesTab.ORDERS,
+				label: 'Open Orders',
+				badge: positionHistory?.length,
+				disabled: true,
+				active: activeTab === FuturesTab.ORDERS,
+				icon: OpenPositionsIcon,
+				onClick: () => router.push(ROUTES.Markets.Orders(marketAsset)),
 			},
 			{
 				name: FuturesTab.TRADES,
@@ -82,7 +99,17 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 				badge: positionHistory?.length,
 				disabled: true,
 				active: activeTab === FuturesTab.TRADES,
+				icon: OrderHistoryIcon,
 				onClick: () => router.push(ROUTES.Markets.Trades(marketAsset)),
+			},
+			{
+				name: FuturesTab.TRANSFERS,
+				label: 'Transfers',
+				badge: positionHistory?.length,
+				disabled: false,
+				active: activeTab === FuturesTab.TRANSFERS,
+				icon: TransfersIcon,
+				onClick: () => router.push(ROUTES.Markets.Transfers(marketAsset)),
 			},
 		],
 		[activeTab, router, marketAsset, positionHistory]
@@ -115,12 +142,18 @@ const UserInfo: React.FC<UserInfoProps> = ({ marketAsset }) => {
 					}
 				/>
 			</TabPanel>
+			<TabPanel name={FuturesTab.ORDERS} activeTab={activeTab}>
+				{/* TODO */}
+			</TabPanel>
 			<TabPanel name={FuturesTab.TRADES} activeTab={activeTab}>
 				<Trades
 					history={positionHistory}
 					isLoading={futuresPositionHistoryQuery.isLoading}
 					isLoaded={futuresPositionHistoryQuery.isFetched}
 				/>
+			</TabPanel>
+			<TabPanel name={FuturesTab.TRANSFERS} activeTab={activeTab}>
+				<Transfers />
 			</TabPanel>
 		</>
 	);

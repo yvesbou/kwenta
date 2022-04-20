@@ -1,4 +1,5 @@
 import React from 'react';
+import ImgSrc, { Svg } from 'react-optimized-image';
 import styled from 'styled-components';
 import Button from './Button';
 
@@ -10,15 +11,17 @@ export type TabButtonProps = {
 	onClick?: React.MouseEventHandler<HTMLButtonElement> | undefined;
 	disabled?: boolean;
 	noOutline?: boolean;
+	icon?: ImgSrc;
 };
 
-const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, ...props }) => {
+const TabButton: React.FC<TabButtonProps> = ({ title, detail, badge, active, icon, ...props }) => {
 	return (
 		<StyledButton {...props}>
 			<div>
 				<p className="title">{title}</p>
 				{detail && <p className="detail">{detail}</p>}
 			</div>
+			{!!icon && <Svg src={icon} />}
 			{!!badge && <div className="badge">{badge}</div>}
 		</StyledButton>
 	);
