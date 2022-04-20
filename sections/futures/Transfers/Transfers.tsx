@@ -1,7 +1,7 @@
 import Card from 'components/Card';
 import Table from 'components/Table';
 import CurrencyIcon from 'components/Currency/CurrencyIcon';
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Svg } from 'react-optimized-image';
 import { CellProps } from 'recharts';
@@ -17,10 +17,22 @@ type TransferProps = {
 
 const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }: TransferProps) => {
 	const { t } = useTranslation();
+
+	const data = [
+		{
+			action: 'withdrawal',
+			amount: '$10,000',
+			date: '12 hours ago',
+			transaction: '0x12441...AVAUB124',
+		},
+	];
+
+	const columnsDeps = useMemo(() => [data], [data]);
+
 	return (
 		<Card>
 			<StyledTable
-				// palette="primary"
+				palette="primary"
 				columns={[
 					{
 						Header: (
@@ -28,12 +40,9 @@ const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }: TransferProps) =>
 								{t('futures.market.user.transfers.table.action')}
 							</StyledTableHeader>
 						),
-						accessor: 'id',
+						accessor: 'action',
 						// : CellProps<any></any>
-						Cell: (cellProps: any) => {
-							cellProps.value;
-						},
-						sortable: true,
+						Cell: (cellProps: any) => cellProps.value,
 						width: 50,
 					},
 					{
@@ -42,32 +51,20 @@ const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }: TransferProps) =>
 								{t('futures.market.user.transfers.table.amount')}
 							</StyledTableHeader>
 						),
-						accessor: 'size',
+						accessor: 'amount',
 						sortType: 'basic',
 						// : CellProps<any></any>
-						Cell: (cellProps: any) => (
-							<FlexDivCentered>
-								<CurrencyIcon currencyKey={cellProps.row.original.asset ?? ''} />
-								<StyledPositionSize>
-									{formatCryptoCurrency(cellProps.value, {
-										currencyKey: cellProps.row.original.asset,
-									})}
-								</StyledPositionSize>
-							</FlexDivCentered>
-						),
-						width: 100,
+						Cell: (cellProps: any) => cellProps.value,
 						sortable: true,
+						width: 100,
 					},
 					{
 						Header: (
 							<StyledTableHeader>{t('futures.market.user.transfers.table.date')}</StyledTableHeader>
 						),
-						accessor: 'id',
+						accessor: 'date',
 						// : CellProps<any></any>
-						Cell: (cellProps: any) => {
-							cellProps.value;
-						},
-						sortable: true,
+						Cell: (cellProps: any) => cellProps.value,
 						width: 50,
 					},
 					{
@@ -76,26 +73,24 @@ const Transfers: FC<TransferProps> = ({ isLoading, isLoaded }: TransferProps) =>
 								{t('futures.market.user.transfers.table.transaction')}
 							</StyledTableHeader>
 						),
-						accessor: 'id',
+						accessor: 'transaction',
 						// : CellProps<any></any>
-						Cell: (cellProps: any) => {
-							cellProps.value;
-						},
-						sortable: true,
+						Cell: (cellProps: any) => cellProps.value,
 						width: 50,
 					},
 				]}
-				data={[]}
+				data={data || []}
+				columnsDeps={columnsDeps}
 				isLoading={isLoading && !isLoaded}
 				noResultsMessage={
 					isLoaded && Trades.length === 0 ? (
 						<TableNoResults>
 							{/* <Svg src={NoNotificationIcon} /> */}
-							{t('dashboard.transactions.table.no-results')}
+							{t('futures.market.user.transfers.table.no-results')}
 						</TableNoResults>
 					) : undefined
 				}
-				// showPagination={true}
+				showPagination={true}
 			/>
 		</Card>
 	);
